@@ -1,12 +1,3 @@
-<template>
-  <h1>⚔  G I T H U B   G U I L D   H A L L  ⚔</h1>
-  <StatusBar />
-  <GuildScene />
-  <ActivityLog />
-  <JoinPanel v-if="guildStore.showJoinPanel" />
-  <InstallBanner v-if="guildStore.showInstallBanner" />
-</template>
-
 <script setup>
 import { guildStore } from '../store/guild'
 import { useGuildWS } from '../composables/useGuildWS'
@@ -18,3 +9,14 @@ import InstallBanner from '../components/InstallBanner.vue'
 
 useGuildWS()
 </script>
+
+<template>
+  <div class="flex flex-col items-center justify-center min-h-screen gap-2 font-mono select-none">
+    <h1 class="text-blue text-base tracking-[3px]">⚔  G I T H U B   G U I L D   H A L L  ⚔</h1>
+    <StatusBar />
+    <GuildScene />
+    <ActivityLog />
+    <JoinPanel v-if="guildStore.showJoinPanel" />
+    <InstallBanner v-if="guildStore.showInstallBanner" />
+  </div>
+</template>

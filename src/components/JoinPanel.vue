@@ -1,20 +1,3 @@
-<template>
-  <div id="join-panel">
-    <h3>申請加入公會</h3>
-    <input
-      v-model="guildStore.joinUsername"
-      placeholder="你的 GitHub username"
-      maxlength="39"
-      @keyup.enter="submitJoin"
-    />
-    <div class="btns">
-      <button id="join-submit" @click="submitJoin">送出申請</button>
-      <button id="join-cancel" @click="close">取消</button>
-    </div>
-    <div id="join-msg" :style="{ color: guildStore.joinMsgColor }">{{ guildStore.joinMsg }}</div>
-  </div>
-</template>
-
 <script setup>
 import { guildStore } from '../store/guild'
 
@@ -53,3 +36,21 @@ async function submitJoin() {
   }
 }
 </script>
+
+<template>
+  <div class="fixed bottom-6 right-6 z-[100] w-[260px] bg-surface border border-border rounded-lg p-4 font-mono">
+    <h3 class="text-fg text-[13px] mb-2.5">申請加入公會</h3>
+    <input
+      v-model="guildStore.joinUsername"
+      class="w-full bg-canvas border border-border text-fg px-2 py-1.5 rounded-md font-mono text-xs outline-none mb-2 focus:border-blue"
+      placeholder="你的 GitHub username"
+      maxlength="39"
+      @keyup.enter="submitJoin"
+    />
+    <div class="flex gap-1.5">
+      <button class="flex-1 py-1.5 border-0 rounded-md font-mono text-xs cursor-pointer bg-[#238636] text-white hover:bg-[#2ea043]" @click="submitJoin">送出申請</button>
+      <button class="flex-1 py-1.5 border-0 rounded-md font-mono text-xs cursor-pointer bg-[#21262d] text-muted" @click="close">取消</button>
+    </div>
+    <div class="text-[11px] mt-1.5 min-h-[16px]" :style="{ color: guildStore.joinMsgColor }">{{ guildStore.joinMsg }}</div>
+  </div>
+</template>

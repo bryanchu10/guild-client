@@ -1,16 +1,3 @@
-<template>
-  <div :class="['game-wrap', { following: guildStore.following }]">
-    <div id="game-container"></div>
-
-    <button v-if="guildStore.following" id="unlock-btn" @click="unlockCamera">
-      ✕ 解除追蹤 <span id="follow-name">{{ guildStore.followName }}</span>
-    </button>
-
-    <div id="minimap-hint">MINIMAP</div>
-    <canvas id="minimap" width="160" height="64"></canvas>
-  </div>
-</template>
-
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
 import Phaser from 'phaser'
@@ -40,3 +27,22 @@ onUnmounted(() => {
   window._guild = null
 })
 </script>
+
+<template>
+  <div :class="['relative w-[800px] h-[480px]', guildStore.following ? 'cursor-default following' : 'cursor-grab']">
+    <div id="game-container"></div>
+
+    <button
+      v-if="guildStore.following"
+      class="flex absolute top-2 right-2 items-center gap-1.5 z-10 bg-surface border border-blue text-muted py-[5px] px-[14px] rounded-md font-mono text-[11px] cursor-pointer hover:bg-[#1c2a3a] hover:text-fg"
+      @click="unlockCamera"
+    >✕ 解除追蹤 <span class="text-yellow">{{ guildStore.followName }}</span></button>
+
+    <div class="absolute bottom-[78px] right-2 z-10 text-[9px] text-[#444] tracking-[1px]">MINIMAP</div>
+    <canvas id="minimap" width="160" height="64" class="absolute bottom-2 right-2 z-10 border border-border rounded"></canvas>
+  </div>
+</template>
+
+<style scoped>
+div:not(.following):active { cursor: grabbing; }
+</style>

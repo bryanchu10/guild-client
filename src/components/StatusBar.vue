@@ -1,10 +1,3 @@
-<template>
-  <div id="status-bar">
-    <span id="conn-status">{{ statusText }}</span>
-    <button id="join-btn" @click="guildStore.showJoinPanel = !guildStore.showJoinPanel">申請加入</button>
-  </div>
-</template>
-
 <script setup>
 import { computed } from 'vue'
 import { guildStore } from '../store/guild'
@@ -16,3 +9,13 @@ const statusText = computed(() => {
   return guildStore.connStatus
 })
 </script>
+
+<template>
+  <div class="flex justify-between items-center w-[800px]">
+    <span class="text-[11px] text-muted">{{ statusText }}</span>
+    <button
+      class="bg-transparent border border-border text-muted px-3 py-1 rounded-md font-mono text-[11px] cursor-pointer hover:border-blue hover:text-blue"
+      @click="guildStore.showJoinPanel = !guildStore.showJoinPanel"
+    >申請加入</button>
+  </div>
+</template>

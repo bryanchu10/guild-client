@@ -1,76 +1,3 @@
-<template>
-  <div class="admin-wrap">
-    <div class="header">
-      <h1>⚔ Guild Hall 管理員</h1>
-      <button class="logout" @click="logout">登出</button>
-    </div>
-
-    <!-- 直接新增成員 -->
-    <h2>直接新增成員</h2>
-    <div class="add-form">
-      <input
-        v-model="addUsername"
-        placeholder="GitHub username"
-        maxlength="39"
-        @keydown.enter="addMember"
-      />
-      <button @click="addMember">新增核准</button>
-    </div>
-    <p class="msg" :class="addMsgType">{{ addMsg }}</p>
-
-    <!-- 待審申請 -->
-    <h2>待審申請 <span class="count">({{ pending.length }})</span></h2>
-    <div v-if="!pending.length" class="empty">無待審申請</div>
-    <div v-for="u in pending" :key="u" class="card">
-      <span class="username">{{ u }}</span>
-      <span class="badge pending">待審</span>
-      <button class="approve" @click="approve(u)">核准</button>
-      <button class="danger" @click="remove(u)">拒絕</button>
-    </div>
-
-    <!-- 已核准成員 -->
-    <h2>已核准成員 <span class="count">({{ approved.length }})</span></h2>
-    <div v-if="!approved.length" class="empty">尚無成員</div>
-    <div v-for="u in approved" :key="u" class="card">
-      <span class="username">{{ u }}</span>
-      <span class="badge approved">已核准</span>
-      <a :href="`https://github.com/${u}`" target="_blank"><button>GitHub ↗</button></a>
-      <button class="danger" @click="remove(u)">移除</button>
-    </div>
-
-    <!-- 測試事件 -->
-    <h2>測試事件 <span class="dev-tag">開發用</span></h2>
-    <div class="test-form">
-      <div class="test-row">
-        <label>Actor</label>
-        <input v-model="testActor" list="member-datalist" placeholder="GitHub username" />
-        <datalist id="member-datalist">
-          <option v-for="u in approved" :key="u" :value="u" />
-        </datalist>
-      </div>
-      <div class="test-row">
-        <label>事件類型</label>
-        <select v-model="testEvent">
-          <option v-for="(_, key) in PRESETS" :key="key" :value="key">
-            {{ PRESETS[key].icon }} {{ key }}
-          </option>
-        </select>
-      </div>
-      <div class="test-row">
-        <label>Target</label>
-        <input v-model="testTarget" list="member-datalist" placeholder="留空=自身事件 / 不存在的名字=走出大門" />
-      </div>
-      <div class="test-row">
-        <label>匿名</label>
-        <input type="checkbox" v-model="testAnon" />
-        <span class="hint">勾選後 actor 視為非公會成員（灰色 ??? 角色進場），target 須填公會成員</span>
-      </div>
-      <button class="fire-btn" @click="fireTest">▶ 觸發</button>
-    </div>
-    <p class="msg" :class="testMsgType">{{ testMsg }}</p>
-  </div>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue'
 
@@ -177,65 +104,94 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.admin-wrap {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 32px;
-  font-family: 'Courier New', monospace;
-  color: #e6edf3;
-  background: #0d1117;
-  min-height: 100vh;
-}
-.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-h1 { color: #58a6ff; font-size: 18px; }
-h2 { color: #8b949e; font-size: 13px; margin: 24px 0 10px; text-transform: uppercase; letter-spacing: 1px; }
-.count { font-weight: normal; }
-.dev-tag { color: #f0883e; font-size: 10px; text-transform: none; }
-.card {
-  background: #161b22; border: 1px solid #30363d;
-  border-radius: 8px; padding: 14px 16px; margin-bottom: 8px;
-  display: flex; align-items: center; gap: 12px;
-}
-.username { flex: 1; font-size: 14px; }
-.badge {
-  font-size: 10px; padding: 2px 8px; border-radius: 10px;
-  background: #21262d; color: #8b949e;
-}
-.badge.approved { background: #1a3a24; color: #3fb950; }
-.badge.pending  { background: #2a1f00; color: #f0883e; }
-button {
-  background: none; border: 1px solid #30363d; color: #8b949e;
-  padding: 4px 12px; border-radius: 6px;
-  font-family: monospace; font-size: 11px; cursor: pointer;
-}
-button:hover { border-color: #58a6ff; color: #58a6ff; }
-button.danger:hover  { border-color: #f85149; color: #f85149; }
-button.approve:hover { border-color: #3fb950; color: #3fb950; }
-button.logout { font-size: 12px; }
-.add-form { display: flex; gap: 8px; margin-top: 10px; }
-.add-form input {
-  flex: 1; background: #161b22; border: 1px solid #30363d;
-  color: #e6edf3; padding: 6px 10px; border-radius: 6px;
-  font-family: monospace; font-size: 13px; outline: none;
-}
-.add-form input:focus { border-color: #58a6ff; }
-.add-form button { background: #238636; color: #fff; border-color: #238636; }
-.add-form button:hover { background: #2ea043; border-color: #2ea043; color: #fff; }
-.msg { font-size: 12px; color: #8b949e; margin-top: 8px; min-height: 18px; }
-.msg.ok  { color: #3fb950; }
-.msg.err { color: #f85149; }
-.empty { color: #444; font-size: 13px; padding: 12px 0; }
-.test-form { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-.test-row { display: flex; align-items: center; gap: 10px; }
-.test-row label:first-child { width: 80px; font-size: 12px; color: #8b949e; flex-shrink: 0; }
-.test-row input:not([type=checkbox]), .test-row select {
-  flex: 1; background: #161b22; border: 1px solid #30363d;
-  color: #e6edf3; padding: 5px 8px; border-radius: 6px;
-  font-family: monospace; font-size: 12px; outline: none;
-}
-.test-row input:focus, .test-row select:focus { border-color: #58a6ff; }
-.hint { font-size: 10px; color: #444; }
-.fire-btn { background: #1f2d3d; border-color: #58a6ff; color: #58a6ff; margin-top: 4px; }
-.fire-btn:hover { background: #58a6ff; color: #0d1117; }
-</style>
+<template>
+  <div class="max-w-[700px] mx-auto p-8 font-mono text-fg bg-canvas min-h-screen">
+
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-blue text-lg">⚔ Guild Hall 管理員</h1>
+      <button class="btn-admin text-xs" @click="logout">登出</button>
+    </div>
+
+    <!-- 直接新增成員 -->
+    <h2 class="text-muted text-[13px] mt-6 mb-2.5 uppercase tracking-[1px]">直接新增成員</h2>
+    <div class="flex gap-2">
+      <input
+        v-model="addUsername"
+        class="flex-1 bg-surface border border-border text-fg px-2.5 py-1.5 rounded-md font-mono text-sm outline-none focus:border-blue"
+        placeholder="GitHub username"
+        maxlength="39"
+        @keydown.enter="addMember"
+      />
+      <button
+        class="bg-[#238636] border border-[#238636] text-white px-3 py-1 rounded-md font-mono text-[11px] cursor-pointer hover:bg-[#2ea043] hover:border-[#2ea043]"
+        @click="addMember"
+      >新增核准</button>
+    </div>
+    <p
+      class="text-xs mt-2 min-h-[18px]"
+      :class="addMsgType === 'ok' ? 'text-green' : addMsgType === 'err' ? 'text-red' : 'text-muted'"
+    >{{ addMsg }}</p>
+
+    <!-- 待審申請 -->
+    <h2 class="text-muted text-[13px] mt-6 mb-2.5 uppercase tracking-[1px]">
+      待審申請 <span class="font-normal">({{ pending.length }})</span>
+    </h2>
+    <div v-if="!pending.length" class="text-[#444] text-[13px] py-3">無待審申請</div>
+    <div v-for="u in pending" :key="u" class="flex items-center gap-3 bg-surface border border-border rounded-lg py-3.5 px-4 mb-2">
+      <span class="flex-1 text-sm">{{ u }}</span>
+      <span class="text-[10px] py-0.5 px-2 rounded-[10px] bg-[#2a1f00] text-orange">待審</span>
+      <button class="btn-approve" @click="approve(u)">核准</button>
+      <button class="btn-danger" @click="remove(u)">拒絕</button>
+    </div>
+
+    <!-- 已核准成員 -->
+    <h2 class="text-muted text-[13px] mt-6 mb-2.5 uppercase tracking-[1px]">
+      已核准成員 <span class="font-normal">({{ approved.length }})</span>
+    </h2>
+    <div v-if="!approved.length" class="text-[#444] text-[13px] py-3">尚無成員</div>
+    <div v-for="u in approved" :key="u" class="flex items-center gap-3 bg-surface border border-border rounded-lg py-3.5 px-4 mb-2">
+      <span class="flex-1 text-sm">{{ u }}</span>
+      <span class="text-[10px] py-0.5 px-2 rounded-[10px] bg-[#1a3a24] text-green">已核准</span>
+      <a :href="`https://github.com/${u}`" target="_blank"><button class="btn-admin">GitHub ↗</button></a>
+      <button class="btn-danger" @click="remove(u)">移除</button>
+    </div>
+
+    <!-- 測試事件 -->
+    <h2 class="text-muted text-[13px] mt-6 mb-2.5 uppercase tracking-[1px]">
+      測試事件 <span class="text-orange text-[10px] normal-case">開發用</span>
+    </h2>
+    <div class="flex flex-col gap-2">
+      <div class="flex items-center gap-2.5">
+        <label class="w-20 text-xs text-muted shrink-0">Actor</label>
+        <input v-model="testActor" list="member-datalist" placeholder="GitHub username" class="admin-input" />
+        <datalist id="member-datalist">
+          <option v-for="u in approved" :key="u" :value="u" />
+        </datalist>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <label class="w-20 text-xs text-muted shrink-0">事件類型</label>
+        <select v-model="testEvent" class="admin-input">
+          <option v-for="(p, key) in PRESETS" :key="key" :value="key">{{ p.icon }} {{ key }}</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <label class="w-20 text-xs text-muted shrink-0">Target</label>
+        <input v-model="testTarget" list="member-datalist" placeholder="留空=自身事件 / 不存在的名字=走出大門" class="admin-input" />
+      </div>
+      <div class="flex items-center gap-2.5">
+        <label class="w-20 text-xs text-muted shrink-0">匿名</label>
+        <input type="checkbox" v-model="testAnon" />
+        <span class="text-[10px] text-[#444]">勾選後 actor 視為非公會成員（灰色 ??? 角色進場），target 須填公會成員</span>
+      </div>
+      <button
+        class="bg-[#1f2d3d] border border-blue text-blue px-3 py-1 rounded-md font-mono text-[11px] cursor-pointer mt-1 hover:bg-blue hover:text-canvas"
+        @click="fireTest"
+      >▶ 觸發</button>
+    </div>
+    <p
+      class="text-xs mt-1.5 min-h-[18px]"
+      :class="testMsgType === 'ok' ? 'text-green' : testMsgType === 'err' ? 'text-red' : 'text-muted'"
+    >{{ testMsg }}</p>
+
+  </div>
+</template>

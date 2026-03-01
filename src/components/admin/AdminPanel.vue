@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 
 const emit = defineEmits(['logout'])
 
+const apiBase = import.meta.env.VITE_API_URL || ''
 const approved = ref([])
 const pending = ref([])
 const addUsername = ref('')
@@ -31,7 +32,7 @@ const PRESETS = {
 }
 
 async function loadMembers() {
-  const res = await fetch('/api/members')
+  const res = await fetch(`${apiBase}/api/members`)
   if (!res.ok) return
   const data = await res.json()
   approved.value = data.approved || []
@@ -39,20 +40,20 @@ async function loadMembers() {
 }
 
 async function approve(username) {
-  await fetch(`/api/members/${username}/approve`, { method: 'POST' })
+  await fetch(`${apiBase}/api/members/${username}/approve`, { method: 'POST' })
   loadMembers()
 }
 
 async function remove(username) {
   if (!confirm(`確定要移除 ${username}？`)) return
-  await fetch(`/api/members/${username}`, { method: 'DELETE' })
+  await fetch(`${apiBase}/api/members/${username}`, { method: 'DELETE' })
   loadMembers()
 }
 
 async function addMember() {
   const username = addUsername.value.trim()
   if (!username) return
-  const res = await fetch('/api/members', {
+  const res = await fetch(`${apiBase}/api/members`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username }),
@@ -78,7 +79,7 @@ async function fireTest() {
   }
   const preset = PRESETS[testEvent.value]
   const action = { ...preset, targetActor: testTarget.value.trim() || null }
-  const res = await fetch('/api/test', {
+  const res = await fetch(`${apiBase}/api/test`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ actor, anonymous: testAnon.value, action }),
@@ -94,7 +95,7 @@ async function fireTest() {
 }
 
 async function logout() {
-  await fetch('/api/admin/logout', { method: 'POST' })
+  await fetch(`${apiBase}/api/admin/logout`, { method: 'POST' })
   emit('logout')
 }
 

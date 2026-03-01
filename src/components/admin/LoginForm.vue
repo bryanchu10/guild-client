@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 
 const emit = defineEmits(['login'])
+const apiBase = import.meta.env.VITE_API_URL || ''
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
@@ -11,7 +12,7 @@ async function submit() {
   loading.value = true
   error.value = ''
   try {
-    const res = await fetch('/api/admin/login', {
+    const res = await fetch(`${apiBase}/api/admin/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: password.value }),

@@ -180,8 +180,7 @@ export class Guild extends Phaser.Scene {
       })
     } else if (this.roster.has(action.targetActor)) {
       const target = this.roster.get(action.targetActor)
-      const tx = target.x + R(-35, 35), ty = target.y + R(-25, 25)
-      this.go(c, tx, ty, () => {
+      this.chase(c, target, () => {
         this.popup(c, action.icon + ' ' + action.msg, action.col, () => {
           addLog(action, c.username); next()
         })
@@ -222,10 +221,9 @@ export class Guild extends Phaser.Scene {
       fontSize: '9px', fontFamily: 'monospace', color: '#aaa', stroke: '#000', strokeThickness: 3,
     }).setOrigin(0.5, 0)
     c.add([g, lbl]); c.gfx = g
-    const tx = target.x + R(-35, 35), ty = target.y + R(-25, 25)
     this.tweens.add({
       targets: c, alpha: 1, duration: 300,
-      onComplete: () => this.go(c, tx, ty, () => {
+      onComplete: () => this.chase(c, target, () => {
         this.popup(c, action.icon + ' ' + action.msg, action.col, () => {
           addLog(action, actorName)
           this.go(c, GATE_X, GATE_DOOR, () => {
@@ -387,6 +385,35 @@ export class Guild extends Phaser.Scene {
       onUpdate:   () => { c.gfx.y = Math.sin(this.time.now * .013) * 2.5; c.setDepth(4 + c.y / 100) },
       onComplete: () => { c.gfx.y = 0; cb?.() },
     })
+  }
+
+  // 追蹤移動中的角色：每步重新讀目標座標，直到足夠接近
+  chase(c, target, cb) {
+    c.timer?.destroy(); this.tweens.killTweensOf(c)
+    const ox = R(-25, 25), oy = R(-20, 20)   // 停靠偏移，只決定一次
+
+    const step = () => {
+      const tx   = target.x + ox
+      const ty   = target.y + oy
+      const dist = Phaser.Math.Distance.Between(c.x, c.y, tx, ty)
+
+      if (dist <= 40) { c.gfx.y = 0; cb?.(); return }
+
+      const stepDist = Math.min(dist, 200)   // 每步最多 200 單位（約 900ms）
+      const ratio    = stepDist / dist
+
+      this.tweens.add({
+        targets: c,
+        x: c.x + (tx - c.x) * ratio,
+        y: c.y + (ty - c.y) * ratio,
+        duration: stepDist * 4.5,
+        ease: 'Linear',
+        onUpdate:   () => { c.gfx.y = Math.sin(this.time.now * .013) * 2.5; c.setDepth(4 + c.y / 100) },
+        onComplete: () => { c.gfx.y = 0; step() },
+      })
+    }
+
+    step()
   }
 
   // ── 對話泡泡 ─────────────────────────────────────────────────

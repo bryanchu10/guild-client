@@ -31,7 +31,7 @@ const PRESETS = {
 }
 
 async function loadMembers() {
-  const res = await fetch(`${apiBase}/api/members`)
+  const res = await fetch(`${apiBase}/api/members`, { credentials: 'include' })
   if (!res.ok) return
   const data = await res.json()
   approved.value = data.approved || []
@@ -39,7 +39,7 @@ async function loadMembers() {
 
 async function remove(username) {
   if (!confirm(`確定要移除 ${username}？`)) return
-  await fetch(`${apiBase}/api/members/${username}`, { method: 'DELETE' })
+  await fetch(`${apiBase}/api/members/${username}`, { method: 'DELETE', credentials: 'include' })
   loadMembers()
 }
 
@@ -49,6 +49,7 @@ async function addMember() {
   const res = await fetch(`${apiBase}/api/members`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({ username }),
   })
   const data = await res.json()
@@ -75,6 +76,7 @@ async function fireTest() {
   const res = await fetch(`${apiBase}/api/test`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({ actor, anonymous: testAnon.value, action }),
   })
   const data = await res.json()
@@ -88,7 +90,7 @@ async function fireTest() {
 }
 
 async function logout() {
-  await fetch(`${apiBase}/api/admin/logout`, { method: 'POST' })
+  await fetch(`${apiBase}/api/admin/logout`, { method: 'POST', credentials: 'include' })
   emit('logout')
 }
 

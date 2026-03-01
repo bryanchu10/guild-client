@@ -8,11 +8,6 @@ export const guildStore = reactive({
   pendingInitMembers: null,
 
   showJoinPanel: false,
-  joinUsername: '',
-  joinMsg: '',
-  joinMsgColor: '#8b949e',
-
-  showInstallBanner: false,
 
   following: false,
   followName: '',

@@ -5,7 +5,6 @@ const emit = defineEmits(['logout'])
 
 const apiBase = import.meta.env.VITE_API_URL || ''
 const approved = ref([])
-const pending = ref([])
 const addUsername = ref('')
 const addMsg = ref('')
 const addMsgType = ref('')
@@ -36,12 +35,6 @@ async function loadMembers() {
   if (!res.ok) return
   const data = await res.json()
   approved.value = data.approved || []
-  pending.value = data.pending || []
-}
-
-async function approve(username) {
-  await fetch(`${apiBase}/api/members/${username}/approve`, { method: 'POST' })
-  loadMembers()
 }
 
 async function remove(username) {
@@ -133,19 +126,7 @@ onMounted(() => {
       :class="addMsgType === 'ok' ? 'text-green' : addMsgType === 'err' ? 'text-red' : 'text-muted'"
     >{{ addMsg }}</p>
 
-    <!-- 待審申請 -->
-    <h2 class="text-muted text-[13px] mt-6 mb-2.5 uppercase tracking-[1px]">
-      待審申請 <span class="font-normal">({{ pending.length }})</span>
-    </h2>
-    <div v-if="!pending.length" class="text-[#444] text-[13px] py-3">無待審申請</div>
-    <div v-for="u in pending" :key="u" class="flex items-center gap-3 bg-surface border border-border rounded-lg py-3.5 px-4 mb-2">
-      <span class="flex-1 text-sm">{{ u }}</span>
-      <span class="text-[10px] py-0.5 px-2 rounded-[10px] bg-[#2a1f00] text-orange">待審</span>
-      <button class="btn-approve" @click="approve(u)">核准</button>
-      <button class="btn-danger" @click="remove(u)">拒絕</button>
-    </div>
-
-    <!-- 已核准成員 -->
+    <!-- 成員 -->
     <h2 class="text-muted text-[13px] mt-6 mb-2.5 uppercase tracking-[1px]">
       已核准成員 <span class="font-normal">({{ approved.length }})</span>
     </h2>

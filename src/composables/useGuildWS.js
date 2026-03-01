@@ -39,16 +39,9 @@ export function useGuildWS() {
           break
         case 'member_join':
           window._guild?.addMember(msg.username)
-          if (msg.username === localStorage.getItem('guild_username') && guildStore.appSlug) {
-            guildStore.showInstallBanner = true
-            setTimeout(() => { guildStore.showInstallBanner = false }, 15000)
-          }
           break
         case 'member_leave':
           window._guild?.removeMember(msg.username)
-          break
-        case 'member_app_installed':
-          guildStore.showInstallBanner = false
           break
       }
     }

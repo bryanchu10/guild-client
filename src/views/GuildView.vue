@@ -5,7 +5,6 @@ import StatusBar from '../components/StatusBar.vue'
 import GuildScene from '../components/GuildScene.vue'
 import ActivityLog from '../components/ActivityLog.vue'
 import JoinPanel from '../components/JoinPanel.vue'
-import InstallBanner from '../components/InstallBanner.vue'
 
 useGuildWS()
 </script>
@@ -17,6 +16,5 @@ useGuildWS()
     <GuildScene />
     <ActivityLog />
     <JoinPanel v-if="guildStore.showJoinPanel" />
-    <InstallBanner v-if="guildStore.showInstallBanner" />
   </div>
 </template>

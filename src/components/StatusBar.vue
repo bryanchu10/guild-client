@@ -16,6 +16,6 @@ const statusText = computed(() => {
     <button
       class="bg-transparent border border-border text-muted px-3 py-1 rounded-md font-mono text-[11px] cursor-pointer hover:border-blue hover:text-blue"
       @click="guildStore.showJoinPanel = !guildStore.showJoinPanel"
-    >申請加入</button>
+    >加入</button>
   </div>
 </template>

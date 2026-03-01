@@ -11,7 +11,7 @@ const statusText = computed(() => {
 </script>
 
 <template>
-  <div class="flex justify-between items-center w-[800px]">
+  <div class="flex justify-between items-center w-full max-w-[800px]">
     <span class="text-[11px] text-muted">{{ statusText }}</span>
     <button
       class="bg-transparent border border-border text-muted px-3 py-1 rounded-md font-mono text-[11px] cursor-pointer hover:border-blue hover:text-blue"

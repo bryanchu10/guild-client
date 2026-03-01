@@ -51,8 +51,9 @@ export class Guild extends Phaser.Scene {
     this.input.on('pointerup', () => { this.drag = null })
 
     // 滾輪縮放
+    const minZoom = Math.max(800 / WORLD_W, 480 / WORLD_H)
     this.input.on('wheel', (ptr, objs, dx, dy) => {
-      cam.setZoom(Phaser.Math.Clamp(cam.zoom - dy * 0.001, 0.25, 2))
+      cam.setZoom(Phaser.Math.Clamp(cam.zoom - dy * 0.001, minZoom, 2))
     })
 
     window._guild = this
@@ -107,10 +108,15 @@ export class Guild extends Phaser.Scene {
     ctx.fillStyle = '#3a2a0a'
     ctx.fillRect(0, Math.round(WALL_H * sy), mw, mh - Math.round(WALL_H * sy))
 
-    const vx = cam.scrollX * sx
-    const vy = cam.scrollY * sy
-    const vw = (cam.width  / cam.zoom) * sx
-    const vh = (cam.height / cam.zoom) * sy
+    const view = cam.worldView
+    const visL = Math.max(0, view.x)
+    const visT = Math.max(0, view.y)
+    const visR = Math.min(WORLD_W, view.right)
+    const visB = Math.min(WORLD_H, view.bottom)
+    const vx = visL / WORLD_W * mw
+    const vy = visT / WORLD_H * mh
+    const vw = (visR - visL) / WORLD_W * mw
+    const vh = (visB - visT) / WORLD_H * mh
     ctx.fillStyle = 'rgba(88,166,255,0.15)'
     ctx.fillRect(vx, vy, vw, vh)
     ctx.strokeStyle = '#58a6ff'

@@ -47,7 +47,7 @@ onMounted(async () => {
       <p class="text-[#444] mb-3">{{ count }} / {{ limit }} 位成員</p>
       <a
         v-if="guildStore.appSlug"
-        :href="`https://github.com/apps/${guildStore.appSlug}/installations/new`"
+        :href="`${guildStore.appSlug}/installations/new`"
         target="_blank"
         class="block text-center py-1.5 rounded-md bg-[#238636] text-white hover:bg-[#2ea043] cursor-pointer"
         @click="close"

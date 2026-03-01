@@ -181,8 +181,15 @@ export class Guild extends Phaser.Scene {
     } else if (this.roster.has(action.targetActor)) {
       const target = this.roster.get(action.targetActor)
       this.chase(c, target, () => {
+        if (!target.qRunning) {
+          target.timer?.destroy()
+          this.tweens.killTweensOf(target)
+          target.pauseCount = (target.pauseCount ?? 0) + 1
+        }
         this.popup(c, action.icon + ' ' + action.msg, action.col, () => {
-          addLog(action, c.username); next()
+          addLog(action, c.username)
+          if ((target.pauseCount ?? 0) > 0 && !--target.pauseCount && !target.qRunning) this.idle(target)
+          next()
         })
       })
     } else {
@@ -224,8 +231,14 @@ export class Guild extends Phaser.Scene {
     this.tweens.add({
       targets: c, alpha: 1, duration: 300,
       onComplete: () => this.chase(c, target, () => {
+        if (!target.qRunning) {
+          target.timer?.destroy()
+          this.tweens.killTweensOf(target)
+          target.pauseCount = (target.pauseCount ?? 0) + 1
+        }
         this.popup(c, action.icon + ' ' + action.msg, action.col, () => {
           addLog(action, actorName)
+          if ((target.pauseCount ?? 0) > 0 && !--target.pauseCount && !target.qRunning) this.idle(target)
           this.go(c, GATE_X, GATE_DOOR, () => {
             this.tweens.add({
               targets: c, y: GATE_OFF, alpha: 0, duration: 400,
